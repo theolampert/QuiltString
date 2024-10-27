@@ -7,8 +7,10 @@ import Foundation
 
 #if canImport(AppKit)
 typealias Font = NSFont
+let traitItalic: NSFontDescriptor.SymbolicTraits = .italic
 #elseif canImport(UIKit)
 typealias Font = UIFont
+let traitItalic: UIFontDescriptor.SymbolicTraits = .traitItalic
 #endif
 
 public extension NSMutableAttributedString {
@@ -39,7 +41,7 @@ public extension NSMutableAttributedString {
 
     func makeItalic(range: NSRange) {
         let italicFont = Font.systemFont(ofSize: Font.systemFontSize)
-        italicFont.fontDescriptor.withSymbolicTraits([.traitItalic])
+        italicFont.fontDescriptor.withSymbolicTraits([traitItalic])
         setTextAttribute(.font, to: italicFont, at: range)
     }
 }
