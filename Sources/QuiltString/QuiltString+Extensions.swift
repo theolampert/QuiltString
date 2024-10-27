@@ -16,7 +16,7 @@ extension QuiltString {
     }
 
     private func applyFormatting(string: NSMutableAttributedString) -> NSMutableAttributedString {
-        for operation in quilt.operations {
+        for operation in quilt.operationLog {
             if case let .addMark(type, start, end) = operation.type {
                 let range = NSRange(
                     location: getSpanMarkerIndex(marker: start),

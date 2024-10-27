@@ -16,14 +16,12 @@ public class QuiltString: ObservableObject {
     @Published
     public var string: String = ""
 
-    public func insert(character: String, atIndex: Int) {
+    private func insert(character: Character, atIndex: Int) {
         quilt.insert(character: character, atIndex: atIndex)
-        createText()
     }
 
-    public func remove(atIndex: Int) {
+    private func remove(atIndex: Int) {
         quilt.remove(atIndex: atIndex)
-        createText()
     }
 
     public func addMark(mark: MarkType, fromIndex: Int, toIndex: Int) {
@@ -34,38 +32,35 @@ public class QuiltString: ObservableObject {
     func getSpanMarkerIndex(marker: SpanMarker) -> Int {
         switch marker {
         case let .before(id):
-            return quilt.appliedOps.firstIndex(where: { $0.id == id }) ?? 0
+            return quilt.currentContent.firstIndex(where: { $0.id == id }) ?? 0
         case let .after(id):
-            return quilt.appliedOps.firstIndex(where: { $0.id == id })!
+            return quilt.currentContent.firstIndex(where: { $0.id == id })!
         }
     }
 
     private func createText() {
-        string = quilt
-            .appliedOps
-            .reduce("") { acc, curr in
-                switch curr.type {
-                case let .insert(character):
-                    return acc + character
-                default:
-                    return acc
-                }
+        string = quilt.currentContent.reduce(into: "") { acc, curr in
+            if case let .insert(character) = curr.type {
+                acc.append(character)
             }
+        }
     }
 
     public func set(newText: String) {
         for change in newText.difference(from: string) {
             switch change {
             case let .insert(offset, element, _):
-                insert(character: String(element), atIndex: offset)
+                insert(character: element, atIndex: offset)
             case let .remove(offset, _, _):
                 remove(atIndex: offset)
             }
         }
+
+        createText()
     }
 
-    public func merge(_ peritext: Quilt) {
-        quilt.merge(peritext)
+    public func merge(_ updates: Quilt) {
+        quilt.merge(updates)
         createText()
     }
 }
