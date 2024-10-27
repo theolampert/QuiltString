@@ -18,9 +18,11 @@ extension QuiltString {
     private func applyFormatting(string: NSMutableAttributedString) -> NSMutableAttributedString {
         for operation in quilt.operationLog {
             if case let .addMark(type, start, end) = operation.type {
+                let startIndex = getSpanMarkerIndex(marker: start)
+                let endIndex = getSpanMarkerIndex(marker: end)
                 let range = NSRange(
-                    location: getSpanMarkerIndex(marker: start),
-                    length: getSpanMarkerIndex(marker: end) + 1
+                    location: startIndex,
+                    length: endIndex - startIndex + 1
                 )
                 switch type {
                 case .underline:
